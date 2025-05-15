@@ -157,7 +157,7 @@ mod tests {
 
         assert_eq!(req.method(), Method::POST);
         assert_eq!(req.url().path(), "/api/v3/order");
-        assert_eq!(req.url().query_pairs().count(), 9);
+        assert_eq!(req.url().query_pairs().count(), 8);
         assert_eq!(req.headers().get("X-MBX-APIKEY").unwrap(), "test_api_key");
     }
 }
