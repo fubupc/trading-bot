@@ -21,33 +21,33 @@ pub struct AccountInfoRequest {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountInfoResponse {
-    maker_commission: u8,
-    taker_commission: u8,
-    buyer_commission: u8,
-    seller_commission: u8,
-    commission_rates: CommisionRates,
-    can_trade: bool,
-    can_withdraw: bool,
-    can_deposit: bool,
-    brokered: bool,
-    require_self_trade_prevention: bool,
-    prevent_sor: bool,
-    update_time: u64,
-    account_type: String,
-    balances: Vec<Balance>,
+    pub maker_commission: u8,
+    pub taker_commission: u8,
+    pub buyer_commission: u8,
+    pub seller_commission: u8,
+    pub commission_rates: CommisionRates,
+    pub can_trade: bool,
+    pub can_withdraw: bool,
+    pub can_deposit: bool,
+    pub brokered: bool,
+    pub require_self_trade_prevention: bool,
+    pub prevent_sor: bool,
+    pub update_time: u64,
+    pub account_type: String,
+    pub balances: Vec<Balance>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CommisionRates {
-    maker: Decimal,
-    taker: Decimal,
-    buyer: Decimal,
-    seller: Decimal,
+    pub maker: Decimal,
+    pub taker: Decimal,
+    pub buyer: Decimal,
+    pub seller: Decimal,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Balance {
-    asset: String,
-    free: Decimal,
-    locked: Decimal,
+    pub asset: String,
+    pub free: Decimal,
+    pub locked: Decimal,
 }

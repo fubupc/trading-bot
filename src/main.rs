@@ -1,9 +1,9 @@
 use rust_decimal::prelude::*;
 
 use trading_bot::{
-    api::API,
+    api::{self, API},
     spot::{
-        account::AccountInfoRequest,
+        account::{AccountInfoRequest, AccountInfoResponse},
         trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
     },
 };
@@ -25,7 +25,17 @@ async fn main() {
 
     let api = API::new(&api_key, &secret_key, &api_base_url).unwrap();
 
-    get_account_info(&api).await;
+    let account_info = get_account_info(&api)
+        .await
+        .expect("Failed to get account info");
+
+    for balance in &account_info.balances {
+        println!(
+            "Asset: {:16} Free: {:16} Locked: {:16}",
+            balance.asset, balance.free, balance.locked
+        );
+    }
+
     // create_new_order(&api).await;
 }
 
@@ -48,14 +58,9 @@ async fn create_new_order(api: &API) {
     println!("Response for new order request: {:?}", resp);
 }
 
-async fn get_account_info(api: &API) {
+async fn get_account_info(api: &API) -> Result<AccountInfoResponse, api::Error> {
     let account_info_req = AccountInfoRequest::builder()
         .omit_zero_balances(Some(true))
         .build();
-    let resp = api
-        .send(account_info_req)
-        .await
-        .expect("Failed to send account info request");
-
-    println!("Response for account info request: {:?}", resp);
+    api.send(account_info_req).await
 }
