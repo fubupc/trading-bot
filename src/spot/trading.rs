@@ -1,4 +1,5 @@
 use http::Method;
+use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -31,7 +32,7 @@ pub struct NewOrderRequest {
     pub strategy_type: Option<u64>,
 
     #[builder(default)]
-    pub iceberg_qty: Option<f64>,
+    pub iceberg_qty: Option<Decimal>,
 
     #[builder(default)]
     pub new_order_resp_type: Option<NewOrderRespType>,
@@ -74,8 +75,8 @@ pub enum STPMode {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum OrderTrigger {
-    StopPrice(f64),
-    TrailingDelta(f64),
+    StopPrice(Decimal),
+    TrailingDelta(u64),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -85,8 +86,8 @@ pub enum OrderParams {
     #[serde(rename_all = "camelCase")]
     Limit {
         time_in_force: TimeInForce,
-        quantity: f64,
-        price: f64,
+        quantity: Decimal,
+        price: Decimal,
     },
 
     #[serde(rename_all = "camelCase")]
@@ -94,7 +95,7 @@ pub enum OrderParams {
 
     #[serde(rename_all = "camelCase")]
     StopLimit {
-        quantity: f64,
+        quantity: Decimal,
 
         #[serde(flatten)]
         trigger: OrderTrigger,
@@ -103,15 +104,15 @@ pub enum OrderParams {
     #[serde(rename_all = "camelCase")]
     StopLossLimit {
         time_in_force: TimeInForce,
-        quantity: f64,
-        price: f64,
+        quantity: Decimal,
+        price: Decimal,
         #[serde(flatten)]
         trigger: OrderTrigger,
     },
 
     #[serde(rename_all = "camelCase")]
     TakeProfit {
-        quantity: f64,
+        quantity: Decimal,
         #[serde(flatten)]
         trigger: OrderTrigger,
     },
@@ -119,21 +120,21 @@ pub enum OrderParams {
     #[serde(rename_all = "camelCase")]
     TakeProfitLimit {
         time_in_force: TimeInForce,
-        quantity: f64,
-        price: f64,
+        quantity: Decimal,
+        price: Decimal,
         #[serde(flatten)]
         trigger: OrderTrigger,
     },
 
     #[serde(rename_all = "camelCase")]
-    LimitMaker { quantity: f64, price: f64 },
+    LimitMaker { quantity: Decimal, price: Decimal },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum MarketQuantity {
-    Quantity(f64),
-    QuoteOrderQty(f64),
+    Quantity(Decimal),
+    QuoteOrderQty(Decimal),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -160,8 +161,8 @@ mod tests {
                     .side(OrderSide::Buy)
                     .params(OrderParams::Limit {
                         time_in_force: TimeInForce::GTC,
-                        quantity: 1.0,
-                        price: 100000.0,
+                        quantity: dec!(1.0),
+                        price: dec!(100000.0),
                     })
                     .build()
             )
@@ -174,7 +175,7 @@ mod tests {
                 NewOrderRequest::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Sell)
-                    .params(OrderParams::Market(MarketQuantity::Quantity(1.0)))
+                    .params(OrderParams::Market(MarketQuantity::Quantity(dec!(1.0))))
                     .build()
             )
             .unwrap()
@@ -187,8 +188,8 @@ mod tests {
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Sell)
                     .params(OrderParams::StopLimit {
-                        quantity: 1.0,
-                        trigger: OrderTrigger::StopPrice(120000.0),
+                        quantity: dec!(1.0),
+                        trigger: OrderTrigger::StopPrice(dec!(120000.0)),
                     })
                     .build()
             )

@@ -1,3 +1,4 @@
+use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -38,15 +39,15 @@ pub struct AccountInfoResponse {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CommisionRates {
-    maker: String,
-    taker: String,
-    buyer: String,
-    seller: String,
+    maker: Decimal,
+    taker: Decimal,
+    buyer: Decimal,
+    seller: Decimal,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Balance {
     asset: String,
-    free: String,
-    locked: String,
+    free: Decimal,
+    locked: Decimal,
 }

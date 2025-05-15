@@ -1,3 +1,5 @@
+use rust_decimal::prelude::*;
+
 use trading_bot::{
     api::API,
     spot::{
@@ -33,8 +35,8 @@ async fn create_new_order(api: &API) {
         .side(OrderSide::Buy)
         .params(OrderParams::Limit {
             time_in_force: TimeInForce::GTC,
-            quantity: 1.0,
-            price: 100000.0,
+            quantity: dec!(1.0),
+            price: dec!(100000.0),
         })
         .build();
 

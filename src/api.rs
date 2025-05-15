@@ -1,6 +1,7 @@
 use hex::ToHex;
 use hmac::{Hmac, Mac};
 use http::{HeaderValue, Method};
+use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::fmt::Debug;
@@ -147,8 +148,8 @@ mod tests {
             .side(OrderSide::Buy)
             .params(OrderParams::Limit {
                 time_in_force: TimeInForce::GTC,
-                quantity: 1.0,
-                price: 100000.0,
+                quantity: dec!(1.0),
+                price: dec!(100000.0),
             })
             .build();
 
