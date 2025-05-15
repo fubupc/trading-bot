@@ -1,6 +1,6 @@
 use trading_bot::{
     api::API,
-    spot::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
+    spot::trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
 };
 
 #[tokio::main]

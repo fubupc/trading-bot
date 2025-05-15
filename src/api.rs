@@ -121,7 +121,7 @@ impl API {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::spot::{NewOrderRequest, OrderParams, OrderSide, TimeInForce};
+    use crate::spot::trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce};
 
     #[test]
     fn test_sign() {
