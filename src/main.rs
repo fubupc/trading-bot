@@ -1,6 +1,9 @@
 use trading_bot::{
     api::API,
-    spot::trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
+    spot::{
+        account::AccountInfoRequest,
+        trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
+    },
 };
 
 #[tokio::main]
@@ -20,7 +23,12 @@ async fn main() {
 
     let api = API::new(&api_key, &secret_key, &api_base_url).unwrap();
 
-    let new_order = NewOrderRequest::builder()
+    get_account_info(&api).await;
+    // create_new_order(&api).await;
+}
+
+async fn create_new_order(api: &API) {
+    let new_order_req = NewOrderRequest::builder()
         .symbol("BTCUSDT".to_owned())
         .side(OrderSide::Buy)
         .params(OrderParams::Limit {
@@ -30,7 +38,22 @@ async fn main() {
         })
         .build();
 
-    let resp = api.send(new_order).await.expect("Failed to send request");
+    let resp = api
+        .send(new_order_req)
+        .await
+        .expect("Failed to send new order request");
 
-    println!("Response: {:?}", resp);
+    println!("Response for new order request: {:?}", resp);
+}
+
+async fn get_account_info(api: &API) {
+    let account_info_req = AccountInfoRequest::builder()
+        .omit_zero_balances(Some(true))
+        .build();
+    let resp = api
+        .send(account_info_req)
+        .await
+        .expect("Failed to send account info request");
+
+    println!("Response for account info request: {:?}", resp);
 }
