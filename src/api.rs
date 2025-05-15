@@ -142,16 +142,16 @@ mod tests {
             "https://testnet.binance.vision",
         )
         .unwrap();
-        let new_order = NewOrderRequest {
-            symbol: "BTCUSDT".to_owned(),
-            side: OrderSide::Buy,
-            params: OrderParams::Limit {
+        let new_order = NewOrderRequest::builder()
+            .symbol("BTCUSDT".to_owned())
+            .side(OrderSide::Buy)
+            .params(OrderParams::Limit {
                 time_in_force: TimeInForce::GTC,
                 quantity: 1.0,
                 price: 100000.0,
-            },
-            optional_params: Default::default(),
-        };
+            })
+            .build();
+
         let req = api.build_request(new_order).unwrap();
 
         assert_eq!(req.method(), Method::POST);

@@ -20,16 +20,15 @@ async fn main() {
 
     let api = API::new(&api_key, &secret_key, &api_base_url).unwrap();
 
-    let new_order = NewOrderRequest {
-        symbol: "BTCUSDT".to_string(),
-        side: OrderSide::Buy,
-        params: OrderParams::Limit {
+    let new_order = NewOrderRequest::builder()
+        .symbol("BTCUSDT".to_owned())
+        .side(OrderSide::Buy)
+        .params(OrderParams::Limit {
             time_in_force: TimeInForce::GTC,
             quantity: 1.0,
             price: 100000.0,
-        },
-        optional_params: Default::default(),
-    };
+        })
+        .build();
 
     let resp = api.send(new_order).await.expect("Failed to send request");
 

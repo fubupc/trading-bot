@@ -1,5 +1,6 @@
 use http::Method;
 use serde::{Deserialize, Serialize};
+use typed_builder::TypedBuilder;
 
 use crate::api::{Request, SecureType};
 
@@ -10,27 +11,32 @@ impl Request for NewOrderRequest {
     type Response = NewOrderResponseACK;
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
 pub struct NewOrderRequest {
     pub symbol: String,
+
     pub side: OrderSide,
 
     #[serde(flatten)]
     pub params: OrderParams,
 
-    #[serde(flatten)]
-    pub optional_params: NewOrderOptParams,
-}
-
-#[derive(Debug, Serialize, Deserialize, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct NewOrderOptParams {
+    #[builder(default)]
     pub new_client_order_id: Option<String>,
+
+    #[builder(default)]
     pub strategy_id: Option<u64>,
+
+    #[builder(default)]
     pub strategy_type: Option<u64>,
+
+    #[builder(default)]
     pub iceberg_qty: Option<f64>,
+
+    #[builder(default)]
     pub new_order_resp_type: Option<NewOrderRespType>,
+
+    #[builder(default)]
     pub self_trade_prevention_mode: Option<STPMode>,
 }
 
@@ -145,44 +151,47 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new_order_request() {
+    fn test_new_order_request_serialization() {
         assert_eq!(
             "symbol=BTCUSDT&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1.0&price=100000.0",
-            serde_urlencoded::to_string(NewOrderRequest {
-                symbol: "BTCUSDT".to_string(),
-                side: OrderSide::Buy,
-                params: OrderParams::Limit {
-                    time_in_force: TimeInForce::GTC,
-                    quantity: 1.0,
-                    price: 100000.0,
-                },
-                optional_params: Default::default(),
-            })
+            serde_urlencoded::to_string(
+                NewOrderRequest::builder()
+                    .symbol("BTCUSDT".to_string())
+                    .side(OrderSide::Buy)
+                    .params(OrderParams::Limit {
+                        time_in_force: TimeInForce::GTC,
+                        quantity: 1.0,
+                        price: 100000.0,
+                    })
+                    .build()
+            )
             .unwrap()
         );
 
         assert_eq!(
             "symbol=BTCUSDT&side=SELL&type=MARKET&quantity=1.0",
-            serde_urlencoded::to_string(NewOrderRequest {
-                symbol: "BTCUSDT".to_string(),
-                side: OrderSide::Sell,
-                params: OrderParams::Market(MarketQuantity::Quantity(1.0)),
-                optional_params: Default::default(),
-            })
+            serde_urlencoded::to_string(
+                NewOrderRequest::builder()
+                    .symbol("BTCUSDT".to_string())
+                    .side(OrderSide::Sell)
+                    .params(OrderParams::Market(MarketQuantity::Quantity(1.0)))
+                    .build()
+            )
             .unwrap()
         );
 
         assert_eq!(
             "symbol=BTCUSDT&side=SELL&type=STOP_LIMIT&quantity=1.0&stopPrice=120000.0",
-            serde_urlencoded::to_string(NewOrderRequest {
-                symbol: "BTCUSDT".to_string(),
-                side: OrderSide::Sell,
-                params: OrderParams::StopLimit {
-                    quantity: 1.0,
-                    trigger: OrderTrigger::StopPrice(120000.0)
-                },
-                optional_params: Default::default(),
-            })
+            serde_urlencoded::to_string(
+                NewOrderRequest::builder()
+                    .symbol("BTCUSDT".to_string())
+                    .side(OrderSide::Sell)
+                    .params(OrderParams::StopLimit {
+                        quantity: 1.0,
+                        trigger: OrderTrigger::StopPrice(120000.0),
+                    })
+                    .build()
+            )
             .unwrap()
         );
     }
