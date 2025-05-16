@@ -1,9 +1,11 @@
 use rust_decimal::prelude::*;
+use std::time::Instant;
 
 use trading_bot::{
     api::{self, API},
     spot::{
         account::{AccountInfoRequest, AccountInfoResponse},
+        general::Ping,
         market_data::{OrderBookRequest, OrderBookResponse},
         trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
     },
@@ -25,10 +27,14 @@ async fn main() {
     log::info!("API Base URL: {}", api_base_url);
 
     let api = API::new(&api_key, &secret_key, &api_base_url).unwrap();
+
+    let start_time = Instant::now();
+    let _ = api.send(Ping).await.unwrap();
+    println!("API round trip latency: {:?}", start_time.elapsed());
+
     let account_info = get_account_info(&api)
         .await
         .expect("Failed to get account info");
-
     println!("{:^16}{:^16}{:^16}", "Asset", "Free", "Locked");
     for balance in &account_info.balances[..10] {
         println!(
@@ -40,12 +46,10 @@ async fn main() {
     let order_book = get_order_book(&api)
         .await
         .expect("Failed to get order book");
-
     println!("{:^16}{:^16}", "Ask Price", "Quantity");
     for ask in order_book.asks[..10].iter().rev() {
         println!("{:>16}{:>16}", ask.price, ask.quantity);
     }
-
     println!("{:^16}{:^16}", "Bid Price", "Quantity");
     for bid in order_book.bids[..10].iter() {
         println!("{:>16}{:>16}", bid.price, bid.quantity);

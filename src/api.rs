@@ -1,7 +1,6 @@
 use hex::ToHex;
 use hmac::{Hmac, Mac};
 use http::{HeaderValue, Method};
-use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::fmt::Debug;
@@ -121,6 +120,8 @@ impl API {
 
 #[cfg(test)]
 mod tests {
+    use rust_decimal::dec;
+
     use super::*;
     use crate::spot::trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce};
 
