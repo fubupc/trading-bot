@@ -2,16 +2,6 @@ use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-use crate::api::Request;
-
-impl Request for AccountInfoRequest {
-    const ENDPOINT: &'static str = "/api/v3/account";
-    const METHOD: http::Method = http::Method::GET;
-    const SECURE_TYPE: crate::api::SecureType = crate::api::SecureType::UserData;
-
-    type Response = AccountInfoResponse;
-}
-
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountInfoRequest {

@@ -1,16 +1,6 @@
-use http::Method;
 use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-
-use crate::api::{Request, SecureType};
-
-impl Request for NewOrderRequest {
-    const ENDPOINT: &'static str = "/api/v3/order";
-    const METHOD: Method = Method::POST;
-    const SECURE_TYPE: SecureType = SecureType::Trade;
-    type Response = NewOrderResponseACK;
-}
 
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]

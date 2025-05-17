@@ -5,6 +5,13 @@ use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::fmt::Debug;
 
+use crate::spot::{
+    account::{AccountInfoRequest, AccountInfoResponse},
+    general::{EmptyResponse, Ping},
+    market_data::{OrderBookRequest, OrderBookResponse},
+    trading::{NewOrderRequest, NewOrderResponseACK},
+};
+
 pub struct API {
     api_key: HeaderValue,
     secret_key: Hmac<Sha256>,
@@ -18,6 +25,39 @@ pub trait Request: Serialize {
     const SECURE_TYPE: SecureType;
 
     type Response: for<'a> Deserialize<'a>;
+}
+
+impl Request for AccountInfoRequest {
+    const ENDPOINT: &'static str = "/api/v3/account";
+    const METHOD: http::Method = http::Method::GET;
+    const SECURE_TYPE: crate::api::SecureType = crate::api::SecureType::UserData;
+
+    type Response = AccountInfoResponse;
+}
+
+impl Request for Ping {
+    const ENDPOINT: &'static str = "/api/v3/ping";
+
+    const METHOD: http::Method = Method::GET;
+
+    const SECURE_TYPE: SecureType = SecureType::None;
+
+    type Response = EmptyResponse;
+}
+
+impl Request for OrderBookRequest {
+    const ENDPOINT: &'static str = "/api/v3/depth";
+    const METHOD: Method = Method::GET;
+    const SECURE_TYPE: SecureType = SecureType::None;
+
+    type Response = OrderBookResponse;
+}
+
+impl Request for NewOrderRequest {
+    const ENDPOINT: &'static str = "/api/v3/order";
+    const METHOD: Method = Method::POST;
+    const SECURE_TYPE: SecureType = SecureType::Trade;
+    type Response = NewOrderResponseACK;
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -1,9 +1,6 @@
-use http::Method;
 use serde::{Deserialize, Serialize};
 use serde_tuple::{Deserialize_tuple, Serialize_tuple};
 use typed_builder::TypedBuilder;
-
-use crate::api::{Request, SecureType};
 
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
@@ -27,12 +24,4 @@ pub struct OrderBookResponse {
 pub struct OrderBookEntry {
     pub price: String,
     pub quantity: String,
-}
-
-impl Request for OrderBookRequest {
-    const ENDPOINT: &'static str = "/api/v3/depth";
-    const METHOD: Method = Method::GET;
-    const SECURE_TYPE: SecureType = SecureType::None;
-
-    type Response = OrderBookResponse;
 }
