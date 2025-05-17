@@ -2,7 +2,7 @@ use rust_decimal::prelude::*;
 use std::time::Instant;
 
 use trading_bot::{
-    api::{self, API},
+    rest_api::{self, API},
     spot::{
         account::{AccountInfoParams, AccountInfoResult},
         general::PingParams,
@@ -77,14 +77,14 @@ async fn create_new_order(api: &API) {
     println!("Response for new order request: {:?}", resp);
 }
 
-async fn get_account_info(api: &API) -> Result<AccountInfoResult, api::Error> {
+async fn get_account_info(api: &API) -> Result<AccountInfoResult, rest_api::Error> {
     let account_info_req = AccountInfoParams::builder()
         .omit_zero_balances(Some(true))
         .build();
     api.send(account_info_req).await
 }
 
-async fn get_order_book(api: &API) -> Result<OrderBookResult, api::Error> {
+async fn get_order_book(api: &API) -> Result<OrderBookResult, rest_api::Error> {
     let order_book_req = OrderBookParams::builder()
         .symbol("BTCUSDT".to_string())
         .build();

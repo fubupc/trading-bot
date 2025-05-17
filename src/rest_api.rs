@@ -30,7 +30,7 @@ pub trait Request: Serialize {
 impl Request for AccountInfoParams {
     const ENDPOINT: &'static str = "/api/v3/account";
     const METHOD: http::Method = http::Method::GET;
-    const SECURE_TYPE: crate::api::SecureType = crate::api::SecureType::UserData;
+    const SECURE_TYPE: crate::rest_api::SecureType = crate::rest_api::SecureType::UserData;
 
     type Response = AccountInfoResult;
 }
