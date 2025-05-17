@@ -6,10 +6,10 @@ use sha2::Sha256;
 use std::fmt::Debug;
 
 use crate::spot::{
-    account::{AccountInfoRequest, AccountInfoResponse},
-    general::{EmptyResponse, Ping},
-    market_data::{OrderBookRequest, OrderBookResponse},
-    trading::{NewOrderRequest, NewOrderResponseACK},
+    account::{AccountInfoParams, AccountInfoResult},
+    general::{PingParams, PingResult},
+    market_data::{OrderBookParams, OrderBookResult},
+    trading::{NewOrderParams, NewOrderResultACK},
 };
 
 pub struct API {
@@ -27,37 +27,37 @@ pub trait Request: Serialize {
     type Response: for<'a> Deserialize<'a>;
 }
 
-impl Request for AccountInfoRequest {
+impl Request for AccountInfoParams {
     const ENDPOINT: &'static str = "/api/v3/account";
     const METHOD: http::Method = http::Method::GET;
     const SECURE_TYPE: crate::api::SecureType = crate::api::SecureType::UserData;
 
-    type Response = AccountInfoResponse;
+    type Response = AccountInfoResult;
 }
 
-impl Request for Ping {
+impl Request for PingParams {
     const ENDPOINT: &'static str = "/api/v3/ping";
 
     const METHOD: http::Method = Method::GET;
 
     const SECURE_TYPE: SecureType = SecureType::None;
 
-    type Response = EmptyResponse;
+    type Response = PingResult;
 }
 
-impl Request for OrderBookRequest {
+impl Request for OrderBookParams {
     const ENDPOINT: &'static str = "/api/v3/depth";
     const METHOD: Method = Method::GET;
     const SECURE_TYPE: SecureType = SecureType::None;
 
-    type Response = OrderBookResponse;
+    type Response = OrderBookResult;
 }
 
-impl Request for NewOrderRequest {
+impl Request for NewOrderParams {
     const ENDPOINT: &'static str = "/api/v3/order";
     const METHOD: Method = Method::POST;
     const SECURE_TYPE: SecureType = SecureType::Trade;
-    type Response = NewOrderResponseACK;
+    type Response = NewOrderResultACK;
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -163,7 +163,7 @@ mod tests {
     use rust_decimal::dec;
 
     use super::*;
-    use crate::spot::trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce};
+    use crate::spot::trading::{NewOrderParams, OrderSide, OrderType, TimeInForce};
 
     #[test]
     fn test_sign() {
@@ -184,10 +184,10 @@ mod tests {
             "https://testnet.binance.vision",
         )
         .unwrap();
-        let new_order = NewOrderRequest::builder()
+        let new_order = NewOrderParams::builder()
             .symbol("BTCUSDT".to_owned())
             .side(OrderSide::Buy)
-            .params(OrderParams::Limit {
+            .r#type(OrderType::Limit {
                 time_in_force: TimeInForce::GTC,
                 quantity: dec!(1.0),
                 price: dec!(100000.0),

@@ -4,7 +4,7 @@ use typed_builder::TypedBuilder;
 
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
-pub struct OrderBookRequest {
+pub struct OrderBookParams {
     pub symbol: String,
 
     #[builder(default)]
@@ -13,7 +13,7 @@ pub struct OrderBookRequest {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct OrderBookResponse {
+pub struct OrderBookResult {
     pub last_update_id: u64,
     pub bids: Vec<OrderBookEntry>,
     pub asks: Vec<OrderBookEntry>,

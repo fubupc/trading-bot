@@ -4,10 +4,10 @@ use std::time::Instant;
 use trading_bot::{
     api::{self, API},
     spot::{
-        account::{AccountInfoRequest, AccountInfoResponse},
-        general::Ping,
-        market_data::{OrderBookRequest, OrderBookResponse},
-        trading::{NewOrderRequest, OrderParams, OrderSide, TimeInForce},
+        account::{AccountInfoParams, AccountInfoResult},
+        general::PingParams,
+        market_data::{OrderBookParams, OrderBookResult},
+        trading::{NewOrderParams, OrderSide, OrderType, TimeInForce},
     },
 };
 
@@ -29,7 +29,7 @@ async fn main() {
     let api = API::new(&api_key, &secret_key, &api_base_url).unwrap();
 
     let start_time = Instant::now();
-    let _ = api.send(Ping).await.unwrap();
+    let _ = api.send(PingParams).await.unwrap();
     println!("API round trip latency: {:?}", start_time.elapsed());
 
     let account_info = get_account_info(&api)
@@ -59,10 +59,10 @@ async fn main() {
 }
 
 async fn create_new_order(api: &API) {
-    let new_order_req = NewOrderRequest::builder()
+    let new_order_req = NewOrderParams::builder()
         .symbol("BTCUSDT".to_owned())
         .side(OrderSide::Buy)
-        .params(OrderParams::Limit {
+        .r#type(OrderType::Limit {
             time_in_force: TimeInForce::GTC,
             quantity: dec!(0.01),
             price: dec!(100000.0),
@@ -77,15 +77,15 @@ async fn create_new_order(api: &API) {
     println!("Response for new order request: {:?}", resp);
 }
 
-async fn get_account_info(api: &API) -> Result<AccountInfoResponse, api::Error> {
-    let account_info_req = AccountInfoRequest::builder()
+async fn get_account_info(api: &API) -> Result<AccountInfoResult, api::Error> {
+    let account_info_req = AccountInfoParams::builder()
         .omit_zero_balances(Some(true))
         .build();
     api.send(account_info_req).await
 }
 
-async fn get_order_book(api: &API) -> Result<OrderBookResponse, api::Error> {
-    let order_book_req = OrderBookRequest::builder()
+async fn get_order_book(api: &API) -> Result<OrderBookResult, api::Error> {
+    let order_book_req = OrderBookParams::builder()
         .symbol("BTCUSDT".to_string())
         .build();
     api.send(order_book_req).await

@@ -4,13 +4,13 @@ use typed_builder::TypedBuilder;
 
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
-pub struct NewOrderRequest {
+pub struct NewOrderParams {
     pub symbol: String,
 
     pub side: OrderSide,
 
     #[serde(flatten)]
-    pub params: OrderParams,
+    pub r#type: OrderType,
 
     #[builder(default)]
     pub new_client_order_id: Option<String>,
@@ -72,7 +72,7 @@ pub enum OrderTrigger {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[serde(tag = "type")]
-pub enum OrderParams {
+pub enum OrderType {
     #[serde(rename_all = "camelCase")]
     Limit {
         time_in_force: TimeInForce,
@@ -129,7 +129,7 @@ pub enum MarketQuantity {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct NewOrderResponseACK {
+pub struct NewOrderResultACK {
     pub symbol: String,
     pub order_id: u64,
     pub order_list_id: i64,
@@ -146,10 +146,10 @@ mod tests {
         assert_eq!(
             "symbol=BTCUSDT&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1.0&price=100000.0",
             serde_urlencoded::to_string(
-                NewOrderRequest::builder()
+                NewOrderParams::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Buy)
-                    .params(OrderParams::Limit {
+                    .r#type(OrderType::Limit {
                         time_in_force: TimeInForce::GTC,
                         quantity: dec!(1.0),
                         price: dec!(100000.0),
@@ -162,10 +162,10 @@ mod tests {
         assert_eq!(
             "symbol=BTCUSDT&side=SELL&type=MARKET&quantity=1.0",
             serde_urlencoded::to_string(
-                NewOrderRequest::builder()
+                NewOrderParams::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Sell)
-                    .params(OrderParams::Market(MarketQuantity::Quantity(dec!(1.0))))
+                    .r#type(OrderType::Market(MarketQuantity::Quantity(dec!(1.0))))
                     .build()
             )
             .unwrap()
@@ -174,10 +174,10 @@ mod tests {
         assert_eq!(
             "symbol=BTCUSDT&side=SELL&type=STOP_LIMIT&quantity=1.0&stopPrice=120000.0",
             serde_urlencoded::to_string(
-                NewOrderRequest::builder()
+                NewOrderParams::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Sell)
-                    .params(OrderParams::StopLimit {
+                    .r#type(OrderType::StopLimit {
                         quantity: dec!(1.0),
                         trigger: OrderTrigger::StopPrice(dec!(120000.0)),
                     })

@@ -4,13 +4,13 @@ use typed_builder::TypedBuilder;
 
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountInfoRequest {
+pub struct AccountInfoParams {
     pub omit_zero_balances: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountInfoResponse {
+pub struct AccountInfoResult {
     pub maker_commission: u8,
     pub taker_commission: u8,
     pub buyer_commission: u8,

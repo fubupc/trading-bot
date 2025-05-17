@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Ping;
+pub struct PingParams;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct EmptyResponse {}
+pub struct PingResult {}
