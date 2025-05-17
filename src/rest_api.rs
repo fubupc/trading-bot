@@ -5,11 +5,14 @@ use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use std::fmt::Debug;
 
-use crate::spot::{
-    account::{AccountInfoParams, AccountInfoResult},
-    general::{PingParams, PingResult},
-    market_data::{OrderBookParams, OrderBookResult},
-    trading::{NewOrderParams, NewOrderResultACK},
+use crate::{
+    common,
+    spot::{
+        account::{AccountInfoParams, AccountInfoResult},
+        general::{PingParams, PingResult},
+        market_data::{OrderBookParams, OrderBookResult},
+        trading::{NewOrderParams, NewOrderResultACK},
+    },
 };
 
 pub struct API {
@@ -73,14 +76,8 @@ pub enum SecureType {
 pub enum Error {
     Other(Box<dyn std::error::Error>),
     Network(reqwest::Error),
-    API(ErrorResponse),
+    API(common::ErrorPayload),
     ResponseParse(reqwest::Error),
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ErrorResponse {
-    pub code: i32,
-    pub msg: String,
 }
 
 impl API {
@@ -103,8 +100,8 @@ impl API {
 
         let resp = self.cli.execute(req).await.map_err(Error::Network)?;
         if resp.status().is_client_error() || resp.status().is_server_error() {
-            let error_response: ErrorResponse = resp.json().await.map_err(Error::ResponseParse)?;
-            return Err(Error::API(error_response));
+            let err: common::ErrorPayload = resp.json().await.map_err(Error::ResponseParse)?;
+            return Err(Error::API(err));
         }
         resp.json().await.map_err(|e| Error::Other(e.into()))
     }
