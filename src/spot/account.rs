@@ -2,15 +2,21 @@ use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
+use crate::core::Request;
+
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountInfoParams {
+pub struct AccountInfoRequest {
     pub omit_zero_balances: Option<bool>,
+}
+
+impl Request for AccountInfoRequest {
+    type Response = AccountInfoResponse;
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountInfoResult {
+pub struct AccountInfoResponse {
     pub maker_commission: u8,
     pub taker_commission: u8,
     pub buyer_commission: u8,

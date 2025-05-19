@@ -2,9 +2,11 @@ use serde::{Deserialize, Serialize};
 use serde_tuple::{Deserialize_tuple, Serialize_tuple};
 use typed_builder::TypedBuilder;
 
+use crate::core::Request;
+
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
-pub struct OrderBookParams {
+pub struct OrderBookRequest {
     pub symbol: String,
 
     #[builder(default)]
@@ -13,7 +15,7 @@ pub struct OrderBookParams {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct OrderBookResult {
+pub struct OrderBookResponse {
     pub last_update_id: u64,
     pub bids: Vec<OrderBookEntry>,
     pub asks: Vec<OrderBookEntry>,
@@ -24,4 +26,8 @@ pub struct OrderBookResult {
 pub struct OrderBookEntry {
     pub price: String,
     pub quantity: String,
+}
+
+impl Request for OrderBookRequest {
+    type Response = OrderBookResponse;
 }

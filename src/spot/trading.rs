@@ -2,9 +2,11 @@ use rust_decimal::prelude::*;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
+use crate::core::Request;
+
 #[derive(Debug, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "camelCase")]
-pub struct NewOrderParams {
+pub struct NewOrderRequest {
     pub symbol: String,
 
     pub side: OrderSide,
@@ -129,12 +131,16 @@ pub enum MarketQuantity {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct NewOrderResultACK {
+pub struct NewOrderResponseACK {
     pub symbol: String,
     pub order_id: u64,
     pub order_list_id: i64,
     pub client_order_id: String,
     pub transact_time: u64,
+}
+
+impl Request for NewOrderRequest {
+    type Response = NewOrderResponseACK;
 }
 
 #[cfg(test)]
@@ -146,7 +152,7 @@ mod tests {
         assert_eq!(
             "symbol=BTCUSDT&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1.0&price=100000.0",
             serde_urlencoded::to_string(
-                NewOrderParams::builder()
+                NewOrderRequest::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Buy)
                     .r#type(OrderType::Limit {
@@ -162,7 +168,7 @@ mod tests {
         assert_eq!(
             "symbol=BTCUSDT&side=SELL&type=MARKET&quantity=1.0",
             serde_urlencoded::to_string(
-                NewOrderParams::builder()
+                NewOrderRequest::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Sell)
                     .r#type(OrderType::Market(MarketQuantity::Quantity(dec!(1.0))))
@@ -174,7 +180,7 @@ mod tests {
         assert_eq!(
             "symbol=BTCUSDT&side=SELL&type=STOP_LIMIT&quantity=1.0&stopPrice=120000.0",
             serde_urlencoded::to_string(
-                NewOrderParams::builder()
+                NewOrderRequest::builder()
                     .symbol("BTCUSDT".to_string())
                     .side(OrderSide::Sell)
                     .r#type(OrderType::StopLimit {

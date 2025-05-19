@@ -1,7 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PingParams;
+use crate::core::Request;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PingResult {}
+pub struct PingRequest;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PingResponse {}
+
+impl Request for PingRequest {
+    type Response = PingResponse;
+}
