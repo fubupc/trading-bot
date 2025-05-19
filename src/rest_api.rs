@@ -6,7 +6,7 @@ use sha2::Sha256;
 use std::fmt::Debug;
 
 use crate::{
-    common,
+    core,
     spot::{
         account::{AccountInfoParams, AccountInfoResult},
         general::{PingParams, PingResult},
@@ -76,7 +76,7 @@ pub enum SecureType {
 pub enum Error {
     Other(Box<dyn std::error::Error>),
     Network(reqwest::Error),
-    API(common::ErrorPayload),
+    API(core::ErrorPayload),
     ResponseParse(reqwest::Error),
 }
 
@@ -100,7 +100,7 @@ impl API {
 
         let resp = self.cli.execute(req).await.map_err(Error::Network)?;
         if resp.status().is_client_error() || resp.status().is_server_error() {
-            let err: common::ErrorPayload = resp.json().await.map_err(Error::ResponseParse)?;
+            let err: core::ErrorPayload = resp.json().await.map_err(Error::ResponseParse)?;
             return Err(Error::API(err));
         }
         resp.json().await.map_err(|e| Error::Other(e.into()))
